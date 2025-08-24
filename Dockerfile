@@ -1,5 +1,5 @@
 # Stage 1: Build the application using Gradle
-FROM gradle:8.7-jdk19 AS build
+FROM gradle:8.7-jdk17 AS build
 WORKDIR /app
 
 # Copy Gradle build files
@@ -15,13 +15,12 @@ RUN chmod +x ./gradlew
 RUN ./gradlew clean build -x test
 
 # Stage 2: Create the final runtime image
-FROM openjdk:19-jdk
+FROM openjdk:17-jdk
 WORKDIR /app
 VOLUME /tmp
 
 # Copy the fat JAR from the build stage
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Expose port and run
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
